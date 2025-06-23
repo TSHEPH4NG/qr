@@ -12,7 +12,7 @@ const {
     Browsers,
     fetchLatestBaileysVersion,
     makeCacheableSignalKeyStore
-} = require("baileys");
+} = require("@whiskeysockets/baileys");
 
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
