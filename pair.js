@@ -6,13 +6,13 @@ let router = express.Router();
 const pino = require("pino");
 const path = require('path');
 const {
-    default: makeWASocket,
+    default: WASocket,
     useMultiFileAuthState,
     delay,
     Browsers,
     fetchLatestBaileysVersion,
     makeCacheableSignalKeyStore
-} = require("@whiskeysockets/baileys");
+} = require("baileys");
 
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
@@ -28,14 +28,14 @@ router.get('/', async (req, res) => {
     async function getPaire() {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
         try {
-            let session = makeWASocket({
+            let session = WASocket({
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
-                browser: Browsers.windows("Firefox"),
+                browser: Browsers.macOS("Safari"),
             });
 
             if (!session.authState.creds.registered) {
@@ -52,19 +52,21 @@ router.get('/', async (req, res) => {
             session.ev.on("connection.update", async (s) => {
                 const { connection, lastDisconnect } = s;
                 if (connection == "open") {
+                	await delay(10000);
                     let link = await upload(`${id}.json`, __dirname + `/temp/${id}/creds.json`);
                     let code = link.split("/")[4];
                     await session.sendMessage(session.user.id, { text: `${code}` });
-    
+                    
+                     await delay(100);
                     await session.ws.close();
-                    await removeFile(`./temp/${id}`);
-                    process.exit(0);
+                    return await removeFile(`./temp/${id}`);
                 } else if (
                     connection === "close" &&
                     lastDisconnect &&
                     lastDisconnect.error &&
                     lastDisconnect.error.output.statusCode != 401
                 ) {
+                	await delay(12000);
                     getPaire();
                 }
             });
@@ -77,8 +79,7 @@ router.get('/', async (req, res) => {
         }
     }
 
-   getPaire();
+  return await getPaire();
 });
 
 module.exports = router;
-
