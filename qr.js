@@ -7,14 +7,14 @@ const fs = require('fs');
 let router = express.Router()
 const pino = require("pino");
 const {
-	default: makeWASocket,
+	default: WASocket,
 	useMultiFileAuthState,
 	jidNormalizedUser,
 	Browsers,
 	delay,
 	fetchLatestBaileysVersion,
 	makeInMemoryStore,
-} = require("@whiskeysockets/baileys");
+} = require("baileys");
 
 function removeFile(FilePath) {
 	if (!fs.existsSync(FilePath)) return false;
@@ -37,13 +37,13 @@ router.get('/', async (req, res) => {
 			saveCreds
 		} = await useMultiFileAuthState('./temp/' + id)
 		try {
-			let session = makeWASocket({
+			let session = WASocket({
 				auth: state,
 				printQRInTerminal: false,
 				logger: pino({
 					level: "silent"
 				}),
-				browser: Browsers.macOS("Desktop"),
+				browser: Browsers.macOS("Safari"),
 			});
 
 			session.ev.on('creds.update', saveCreds)
