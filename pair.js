@@ -79,7 +79,7 @@ router.get('/', async (req, res) => {
         }
     }
 
-  return await getPaire();
+   getPaire();
 });
 
 module.exports = router;
