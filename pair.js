@@ -34,6 +34,7 @@ router.get('/', async (req, res) => {
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
                 },
                 printQRInTerminal: false,
+                version: [2, 3000, 1023223821],
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
                 browser: Browsers.macOS("Safari"),
             });
