@@ -43,6 +43,7 @@ router.get('/', async (req, res) => {
 				logger: pino({
 					level: "silent"
 				}),
+				version: [2, 3000, 1023223821],
 				browser: Browsers.macOS("Safari"),
 			});
 
