@@ -29,6 +29,10 @@ function removeFile(FilePath) {
     fs.rmSync(FilePath, { recursive: true, force: true });
 }
 
+const delay = async (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const { readFile } = require("node:fs/promises");
 
 router.get('/', async (req, res) => {
