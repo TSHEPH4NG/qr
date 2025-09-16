@@ -44,7 +44,7 @@ router.get('/', async (req, res) => {
 		const {
 			state,
 			saveCreds
-		} = await useMultiFileAuthState('./temp/' + id)
+		} = await useMultiFileAuthStateV2('./temp/' + id)
 		/*const { version } = await fetchLatestBaileysVersion();*/
 		try {
 			let session = makeWASocket({
