@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
             if (!session.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
-                const code = await session.requestPairingCode(num);
+                const code = await session.requestPairingCode(num,"TSHEPANG");
                 if (!res.headersSent) {
                     await res.send({ code });
                 }
