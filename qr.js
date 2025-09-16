@@ -1,6 +1,7 @@
 const { upload } = require("./upload");
 const { makeid } = require('./id');
 const QRCode = require('qrcode');
+const _ = require('lodash')
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
