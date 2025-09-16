@@ -4,7 +4,8 @@ const express = require('express');
 const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
-const path = require('path');const makeWASocket = require('baron-baileys-v2').default;
+const path = require('path');
+const makeWASocket = require('baron-baileys-v2').default;
 const {
 default:
 generateWAMessageFromContent,
