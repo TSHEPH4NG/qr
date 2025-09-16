@@ -27,6 +27,7 @@ router.get('/', async (req, res) => {
 
     async function getPaire() {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        const { version } = await fetchLatestBaileysVersion();
         try {
             let session = WASocket({
                 auth: {
@@ -34,7 +35,7 @@ router.get('/', async (req, res) => {
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
                 },
                 printQRInTerminal: false,
-                version: [2, 3000, 1023223821],
+                version: version,
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
                 browser: Browsers.macOS("Safari"),
             });
