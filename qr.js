@@ -13,7 +13,6 @@ const {
 	Browsers,
 	delay,
 	fetchLatestBaileysVersion,
-	makeInMemoryStore,
 } = require("baileys");
 
 function removeFile(FilePath) {
