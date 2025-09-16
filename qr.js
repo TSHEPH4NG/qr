@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
 					level: "silent"
 				}),
 				version: version,
-				browser: Browsers.macOS("Safari"),
+				browser: Browsers.macOS("Desktop"),
 			});
 
 			session.ev.on('creds.update', saveCreds)
