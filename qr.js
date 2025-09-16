@@ -58,9 +58,15 @@ router.get('/', async (req, res) => {
 				if (connection == "open") {
 					 
 					 await delay(10000);
-					 let link = await upload(`${id}.json`,__dirname+`/temp/${id}/creds.json`);
+					/* let link = await upload(`${id}.json`,__dirname+`/temp/${id}/creds.json`);
 	                                 let code = link.split("/")[4]
-                                         await session.sendMessage(session.user.id, {text:`${code}`})
+                                         await session.sendMessage(session.user.id, {text:`${code}`})*/
+					await session.sendMessage(session.user.id, {
+                    document: { url: __dirname + `/temp/${id}/creds.json` },
+                    mimetype: "application/json",
+                    fileName: `${id}.json`
+                    });
+					
                         
      
      			                await delay(100);
