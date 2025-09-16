@@ -1,5 +1,5 @@
 const { upload } = require("./upload");
-const {makeid} = require('./id');
+const { makeid } = require('./id');
 const QRCode = require('qrcode');
 const express = require('express');
 const path = require('path');
@@ -36,6 +36,7 @@ router.get('/', async (req, res) => {
 			state,
 			saveCreds
 		} = await useMultiFileAuthState('./temp/' + id)
+		const { version } = await fetchLatestBaileysVersion();
 		try {
 			let session = WASocket({
 				auth: state,
@@ -43,7 +44,7 @@ router.get('/', async (req, res) => {
 				logger: pino({
 					level: "silent"
 				}),
-				version: [2, 3000, 1023223821],
+				version: version,
 				browser: Browsers.macOS("Safari"),
 			});
 
