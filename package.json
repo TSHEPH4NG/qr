@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "baron-baileys-v2": "^1.1.9",
+    "lodash": "^4.17.21",
     "qrcode": "^1.5.3",
     "dotenv": "^16.3.1",
     "awesome-phonenumber": "^2.64.0",
