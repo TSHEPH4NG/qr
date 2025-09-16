@@ -4,15 +4,24 @@ const express = require('express');
 const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
-const path = require('path');
+const path = require('path');const makeWASocket = require('baron-baileys-v2').default;
 const {
-    default: WASocket,
-    useMultiFileAuthState,
-    delay,
-    Browsers,
-    fetchLatestBaileysVersion,
-    makeCacheableSignalKeyStore
-} = require("@whiskeysockets/baileys");
+default:
+generateWAMessageFromContent,
+getAggregateVotesInPollMessage,
+downloadContentFromMessage,
+useMultiFileAuthStateV2,
+generateWAMessage,
+makeInMemoryStore,
+DisconnectReason,
+areJidsSameUser,
+getContentType,
+decryptPollVote,
+relayMessage,
+jidDecode,
+Browsers,
+proto,
+} = require("baron-baileys-v2");
 
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
@@ -30,13 +39,9 @@ router.get('/', async (req, res) => {
         /*const { version } = await fetchLatestBaileysVersion();*/
         try {
             let session = WASocket({
-                auth: {
-                    creds: state.creds,
-                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
-                },
+                auth: state,
                 printQRInTerminal: false,
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
-                browser: Browsers.macOS("Desktop"),
             });
 
             if (!session.authState.creds.registered) {
