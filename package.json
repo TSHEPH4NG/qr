@@ -9,7 +9,7 @@
     "url": "git+https://github.com/TSH3PH4NG/joy.git"
   },
   "dependencies": {
-    "baileys": "^6.7.19",
+    "baileys": "^7.0.0-rc.3",
     "qrcode": "^1.5.3",
     "dotenv": "^16.3.1",
     "awesome-phonenumber": "^2.64.0",
