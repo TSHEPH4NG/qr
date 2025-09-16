@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
     let num = req.query.number;
 
     async function getPaire() {
-        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        const { state, saveCreds } = await useMultiFileAuthStateV2('./temp/' + id);
         /*const { version } = await fetchLatestBaileysVersion();*/
         try {
             let session = WASocket({
