@@ -27,15 +27,14 @@ router.get('/', async (req, res) => {
 
     async function getPaire() {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
-        const { version } = await fetchLatestBaileysVersion();
+        /*const { version } = await fetchLatestBaileysVersion();*/
         try {
             let session = WASocket({
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
                 },
-                printQRInTerminal: false,
-                version: version,
+                printQRInTerminal: false,0
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
                 browser: Browsers.macOS("Desktop"),
             });
@@ -59,7 +58,7 @@ router.get('/', async (req, res) => {
                     let code = link.split("/")[4];
                     await session.sendMessage(session.user.id, { text: `${code}` });
                     
-                     await delay(100);
+                     await delay(2000);
                     await session.ws.close();
                     return await removeFile(`./temp/${id}`);
                 } else if (
