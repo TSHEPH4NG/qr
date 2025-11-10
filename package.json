@@ -9,7 +9,7 @@
     "url": "git+https://github.com/TSH3PH4NG/joy.git"
   },
   "dependencies": {
-    "baron-baileys-v2": "^1.2.4",
+    "@whiskeysockets/baileys": "^6.7.21",
     "lodash": "^4.17.21",
     "qrcode": "^1.5.3",
     "dotenv": "^16.3.1",
