@@ -7,24 +7,8 @@ const path = require('path');
 const fs = require('fs');
 let router = express.Router()
 const pino = require("pino");
-const makeWASocket = require('baron-baileys-v2').default;
-const {
-default:
-generateWAMessageFromContent,
-getAggregateVotesInPollMessage,
-downloadContentFromMessage,
-useMultiFileAuthStateV2,
-generateWAMessage,
-makeInMemoryStore,
-DisconnectReason,
-areJidsSameUser,
-getContentType,
-decryptPollVote,
-relayMessage,
-jidDecode,
-Browsers,
-proto,
-} = require("baron-baileys-v2");
+const { useMultiFileAuthState, makeWASocket, DisconnectReason } = require('@whiskeysockets/baileys');
+
 
 function removeFile(FilePath) {
 	if (!fs.existsSync(FilePath)) return false;
