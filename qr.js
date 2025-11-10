@@ -31,7 +31,7 @@ const {
 router.get('/', async (req, res) => {
 	const id = makeid();
 	async function Getqr() {
-		const { state, saveCreds } = await useMultiFileAuthState(stateDir);
+		const { state, saveCreds } = await useMultiFileAuthState("./temp/" + id);
 
 		try {
 			
