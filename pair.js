@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
         }
         num = String(num).replace(/[^0-9]/g, '');
         try {
-          const pairing = await sock.requestPairingCode(num, 'TSHEPANG'); // keep your label
+          const pairing = await sock.requestPairingCode(num);
           if (!res.headersSent) res.send({ code: pairing });
         } catch (err) {
           // requestPairingCode can fail depending on version/WhatsApp state
