@@ -5,7 +5,7 @@ const pino = require('pino');
 
 const { upload } = require("./upload");
 const { makeid } = require('./id');
-const { useMultiFileAuthState, makeWASocket, DisconnectReason , Browsers } = require('@whiskeysockets/baileys');
+const { useMultiFileAuthState, makeWASocket, DisconnectReason , Browsers , makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
 
 const router = express.Router();
 
@@ -30,10 +30,19 @@ router.get('/', async (req, res) => {
 
       // create socket
       const sock = makeWASocket({
-        auth: state,
-        printQRInTerminal: false,
-        logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
-        browser: Browsers.macOS("Google Chrome")
+            auth: {
+                creds: state.creds,
+                keys: makeCacheableSignalKeyStore(
+                    state.keys,
+                    pino({ level: "silent" })
+                )
+            },
+            browser: Browsers.ubuntu("Chrome"),
+            logger: Pino({ level: "silent" }),
+            printQRInTerminal: false,
+            connectTimeoutMs: 60000,
+            defaultQueryTimeoutMs: 60000,
+            keepAliveIntervalMs: 30000
       });
 
       // if not registered, request pairing code via phone number
