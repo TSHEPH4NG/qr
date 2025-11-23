@@ -9,7 +9,7 @@
     "url": "git+https://github.com/TSH3PH4NG/joy.git"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:baileys@6.7.21",
+    "@whiskeysockets/baileys": "npm:baileys@7.0.0-rc.9",
     "sharp": "^0.33.5",
     "qrcode": "^1.5.3",
     "dotenv": "^16.3.1",
