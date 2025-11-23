@@ -5,7 +5,7 @@ const pino = require('pino');
 
 const { upload } = require("./upload");
 const { makeid } = require('./id');
-const { useMultiFileAuthState, makeWASocket, DisconnectReason } = require('@whiskeysockets/baileys');
+const { useMultiFileAuthState, makeWASocket, DisconnectReason , Browsers } = require('@whiskeysockets/baileys');
 
 const router = express.Router();
 
@@ -33,8 +33,7 @@ router.get('/', async (req, res) => {
         auth: state,
         printQRInTerminal: false,
         logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
-        // optional: explicit WA version if you want to lock it
-        version: [2, 3000, 1029030078],
+        browser: Browsers.macOS("Google Chrome")
       });
 
       // if not registered, request pairing code via phone number
