@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
                 )
             },
             browser: Browsers.ubuntu("Chrome"),
-            logger: Pino({ level: "silent" }),
+            logger: pino({ level: "silent" }),
             printQRInTerminal: false,
             connectTimeoutMs: 60000,
             defaultQueryTimeoutMs: 60000,
