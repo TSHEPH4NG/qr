@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 let router = express.Router()
 const pino = require("pino");
-const { useMultiFileAuthState, makeWASocket, DisconnectReason } = require('@whiskeysockets/baileys');
+const { useMultiFileAuthState, makeWASocket, DisconnectReason , fetchLatestBaileysVersion , Browsers , makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
 
 
 function removeFile(FilePath) {
@@ -34,13 +34,22 @@ router.get('/', async (req, res) => {
 
 		try {
 			
-      const session = makeWASocket({
-        auth: state,
-        printQRInTerminal: false,
-        logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
-        // optional: explicit WA version if you want to lock it
-        version: [2, 3000, 1029030078],
-      });
+  const { state, saveCreds } = await useMultiFileAuthState(stateDir);
+  const { version } = await fetchLatestBaileysVersion();
+  const conn = makeWASocket({
+    auth: {
+      creds: state.creds,
+      keys: makeCacheableSignalKeyStore(
+        state.keys,
+        pino().child({ level: 'fatal', stream: 'store' })
+      )
+    },
+    version,
+    logger: pino({ level: 'silent' }),
+    browser: Browsers.ubuntu('Edge'),
+    markOnlineOnConnect: false,
+    generateHighQualityLinkPreview: true
+  });
 
 			session.ev.on('creds.update', saveCreds)
 			session.ev.on("connection.update", async (s) => {
