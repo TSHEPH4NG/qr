@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
     generateHighQualityLinkPreview: true
   });
 
-      if (!sock.authState?.creds?.registered) {
+      if (!sock.authState.creds.registered) {
         if (!num) {
           if (!res.headersSent) res.status(400).send({ error: 'number query required' });
           await removeFile(stateDir);
