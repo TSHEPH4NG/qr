@@ -4,7 +4,7 @@ const path = require('path');
 const pino = require('pino');
 const { upload } = require("./upload");
 const { makeid } = require('./id');
-const { useMultiFileAuthState, makeWASocket, DisconnectReason, Browsers, makeCacheableSignalKeyStore, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
+const { useMultiFileAuthState, makeWASocket, DisconnectReason, Browsers, makeCacheableSignalKeyStore, fetchLatestBaileysVersion } = require('baileys');
 
 const router = express.Router();
 
@@ -23,25 +23,23 @@ router.get('/', async (req, res) => {
     const stateDir = path.join(__dirname, 'temp', id);
 
     try {
-      const { version } = await fetchLatestBaileysVersion();
-      const { state, saveCreds } = await useMultiFileAuthState(stateDir);
 
-      const sock = makeWASocket({
-        version,
-        auth: {
-          creds: state.creds,
-          keys: makeCacheableSignalKeyStore(
-            state.keys,
-            pino({ level: "silent" })
-          )
-        },
-        browser: Browsers.ubuntu("Safari"),
-        logger: pino({ level: "silent" }),
-        printQRInTerminal: false,
-        connectTimeoutMs: 60000,
-        defaultQueryTimeoutMs: 60000,
-        keepAliveIntervalMs: 30000
-      });
+  const { state, saveCreds } = await useMultiFileAuthState(stateDir);
+  const { version } = await fetchLatestBaileysVersion();
+  const sock = makeWASocket({
+    auth: {
+      creds: state.creds,
+      keys: makeCacheableSignalKeyStore(
+        state.keys,
+        pino().child({ level: 'fatal', stream: 'store' })
+      )
+    },
+    version,
+    logger: pino({ level: 'silent' }),
+    browser: Browsers.ubuntu('Edge'),
+    markOnlineOnConnect: false,
+    generateHighQualityLinkPreview: true
+  });
 
       if (!sock.authState?.creds?.registered) {
         if (!num) {
