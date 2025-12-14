@@ -23,23 +23,22 @@ router.get('/', async (req, res) => {
     const stateDir = path.join(__dirname, 'temp', id);
 
     try {
-
-  const { state, saveCreds } = await useMultiFileAuthState(stateDir);
-  const { version } = await fetchLatestBaileysVersion();
-  const sock = makeWASocket({
-    auth: {
-      creds: state.creds,
-      keys: makeCacheableSignalKeyStore(
-        state.keys,
-        pino().child({ level: 'fatal', stream: 'store' })
-      )
-    },
-    version,
-    logger: pino({ level: 'silent' }),
-    browser: Browsers.ubuntu('Edge'),
-    markOnlineOnConnect: false,
-    generateHighQualityLinkPreview: true
-  });
+      const { state, saveCreds } = await useMultiFileAuthState(stateDir);
+      const { version } = await fetchLatestBaileysVersion();
+      const sock = makeWASocket({
+        auth: {
+          creds: state.creds,
+          keys: makeCacheableSignalKeyStore(
+            state.keys,
+            pino().child({ level: 'fatal', stream: 'store' })
+          )
+        },
+        version,
+        logger: pino({ level: 'silent' }),
+        browser: Browsers.ubuntu('Edge'),
+        markOnlineOnConnect: false,
+        generateHighQualityLinkPreview: true
+      });
 
       if (!sock.authState.creds.registered) {
         if (!num) {
@@ -49,6 +48,8 @@ router.get('/', async (req, res) => {
         }
 
         num = String(num).replace(/[^0-9]/g, '');
+
+        await delay(3000);
 
         try {
           const pairing = await sock.requestPairingCode(num);
