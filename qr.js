@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 let router = express.Router()
 const pino = require("pino");
-const { useMultiFileAuthState, makeWASocket, DisconnectReason , fetchLatestBaileysVersion , Browsers , makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
+const { useMultiFileAuthState, makeWASocket, DisconnectReason , fetchLatestBaileysVersion , Browsers , makeCacheableSignalKeyStore } = require('baileys');
 
 
 function removeFile(FilePath) {
