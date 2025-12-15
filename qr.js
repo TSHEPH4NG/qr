@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
 			
   const { state, saveCreds } = await useMultiFileAuthState(stateDir);
   const { version } = await fetchLatestBaileysVersion();
-  const conn = makeWASocket({
+  const session = makeWASocket({
     auth: {
       creds: state.creds,
       keys: makeCacheableSignalKeyStore(
@@ -61,10 +61,8 @@ router.get('/', async (req, res) => {
 				if (qr) await res.end(await QRCode.toBuffer(qr));
 				if (connection == "open") {
 					 
-					 await delay(3000);
-					/* let link = await upload(`${id}.json`,__dirname+`/temp/${id}/creds.json`);
-	                                 let code = link.split("/")[4]
-                                         await session.sendMessage(session.user.id, {text:`${code}`})*/
+				    await delay(3000);
+				
 					await session.sendMessage(session.user.id, {
                     document: { url: __dirname + `/temp/${id}/creds.json` },
                     mimetype: "application/json",
