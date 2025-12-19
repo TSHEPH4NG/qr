@@ -6,8 +6,7 @@ const path = require('path');
 const fs = require('fs');
 let router = express.Router()
 const pino = require("pino");
-const { useMultiFileAuthState, makeWASocket, DisconnectReason , fetchLatestBaileysVersion , Browsers , makeCacheableSignalKeyStore } = require('baileys');
-
+const { useMultiFileAuthState, makeWASocket, DisconnectReason, Browsers, makeCacheableSignalKeyStore, fetchLatestBaileysVersion } = require('baileys');
 
 function removeFile(FilePath) {
 	if (!fs.existsSync(FilePath)) return false;
@@ -29,12 +28,10 @@ const {
 } = require("node:fs/promises")
 router.get('/', async (req, res) => {
 	const id = makeid();
-	async function Getqr() {
-		const { state, saveCreds } = await useMultiFileAuthState("./temp/" + id);
-
-		try {
+	async function Getqr() {	
+try {
 			
-  const { state, saveCreds } = await useMultiFileAuthState(stateDir);
+  const { state, saveCreds } = await useMultiFileAuthState("./temp/" + id);
   const { version } = await fetchLatestBaileysVersion();
   const session = makeWASocket({
     auth: {
@@ -71,7 +68,7 @@ router.get('/', async (req, res) => {
 					
                         
      
-     			                await delay(3000);
+     			    await delay(3000);
 					await session.ws.close();
 					return await removeFile("temp/" + id);
 				} else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
