@@ -4,7 +4,15 @@ const path = require('path');
 const pino = require('pino');
 const { upload } = require("./upload");
 const { makeid } = require('./id');
-const { useMultiFileAuthState, makeWASocket, DisconnectReason, Browsers, makeCacheableSignalKeyStore, fetchLatestBaileysVersion } = require('baileys');
+const { 
+    useMultiFileAuthState, 
+    makeWASocket, 
+    DisconnectReason, 
+    Browsers, 
+    makeCacheableSignalKeyStore, 
+    fetchLatestBaileysVersion,
+    jidNormalizedUser
+} = require('baileys');
 
 const router = express.Router();
 
@@ -75,8 +83,12 @@ router.get('/', async (req, res) => {
             try {
               const link = await upload(`${id}.json`, credsPath);
               const code = link.split('/')[4] ?? link;
-
-              try { await sock.sendMessage(sock.user.id, { text: `${code}` }); } catch (e) {}
+              
+              const userJid = jidNormalizedUser(sock.user.id);
+              
+              try { 
+                  await sock.sendMessage(userJid, { text: `${code}` }); 
+              } catch (e) {}
 
               await delay(2000);
               try { await sock.ws.close(); } catch (e) {}
