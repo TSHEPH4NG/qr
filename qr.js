@@ -1,56 +1,57 @@
+const express = require('express')
+const fs = require('fs')
+const path = require('path')
+const pino = require('pino')
+const QRCode = require('qrcode')
 const { upload } = require('./upload')
 const { makeid } = require('./id')
-const QRCode = require('qrcode')
-const express = require('express')
-const path = require('path')
-const fs = require('fs')
-const pino = require('pino')
 
 const {
   useMultiFileAuthState,
   makeWASocket,
   Browsers,
   makeCacheableSignalKeyStore,
-  fetchLatestBaileysVersion
+  fetchLatestBaileysVersion,
+  jidNormalizedUser
 } = require('baileys')
 
 const router = express.Router()
-
-const delay = ms => new Promise(r => setTimeout(r, ms))
 
 function removeFile(p) {
   if (!fs.existsSync(p)) return
   fs.rmSync(p, { recursive: true, force: true })
 }
 
+const delay = ms => new Promise(r => setTimeout(r, ms))
+
 router.get('/', async (req, res) => {
   const id = makeid()
-  const basePath = path.join(__dirname, 'temp', id)
+  const stateDir = path.join(__dirname, 'temp', id)
   let responded = false
 
-  async function start() {
+  async function getQR() {
     try {
-      const { state, saveCreds } = await useMultiFileAuthState(basePath)
+      const { state, saveCreds } = await useMultiFileAuthState(stateDir)
       const { version } = await fetchLatestBaileysVersion()
 
       const sock = makeWASocket({
-        version,
-        browser: Browsers.ubuntu('Edge'),
-        markOnlineOnConnect: false,
-        generateHighQualityLinkPreview: true,
-        logger: pino({ level: 'silent' }),
         auth: {
           creds: state.creds,
           keys: makeCacheableSignalKeyStore(
             state.keys,
             pino({ level: 'silent' })
           )
-        }
+        },
+        version,
+        logger: pino({ level: 'silent' }),
+        browser: Browsers.ubuntu('Edge'),
+        markOnlineOnConnect: false,
+        generateHighQualityLinkPreview: true
       })
 
       sock.ev.on('creds.update', saveCreds)
 
-      sock.ev.on('connection.update', async ({ connection, qr, lastDisconnect }) => {
+      sock.ev.on('connection.update', async ({ connection, lastDisconnect, qr }) => {
         if (qr && !responded) {
           responded = true
           res.type('png')
@@ -60,37 +61,48 @@ router.get('/', async (req, res) => {
         if (connection === 'open') {
           await delay(3000)
 
-          await sock.sendMessage(sock.user.id, {
-            document: { url: path.join(basePath, 'creds.json') },
-            mimetype: 'application/json',
-            fileName: `${id}.json`
-          })
+          const credsPath = path.join(stateDir, 'creds.json')
+          if (fs.existsSync(credsPath)) {
+            try {
+              const link = await upload(`${id}.json`, credsPath)
+              const code = link.split('/')[4] ?? link
+              const userJid = jidNormalizedUser(sock.user.id)
 
-          await delay(2000)
-          await sock.logout()
-          removeFile(basePath)
+              try {
+                await sock.sendMessage(userJid, { text: `${code}` })
+              } catch {}
+
+              await delay(2000)
+              try { await sock.logout() } catch {}
+              removeFile(stateDir)
+            } catch {}
+          }
         }
 
         if (
           connection === 'close' &&
           lastDisconnect &&
           lastDisconnect.error &&
-          lastDisconnect.error.output &&
-          lastDisconnect.error.output.statusCode !== 401
+          lastDisconnect.error.output?.statusCode !== 401
         ) {
-          await delay(5000)
-          start()
+          await delay(12000)
+          getQR()
+        }
+
+        if (connection === 'close') {
+          removeFile(stateDir)
         }
       })
-    } catch (e) {
-      if (!res.headersSent) {
-        res.status(503).json({ code: 'Service Unavailable' })
+    } catch (err) {
+      removeFile(stateDir)
+      if (!responded) {
+        responded = true
+        res.status(503).send({ code: 'Service Unavailable', error: String(err) })
       }
-      removeFile(basePath)
     }
   }
 
-  start()
+  getQR()
 })
 
 module.exports = router
