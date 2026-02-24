@@ -98,12 +98,12 @@ router.get('/', async (req, res) => {
                         const userJid = Object.keys(sock.authState.creds.me || {}).length > 0
                             ? jidNormalizedUser(sock.authState.creds.me.id)
                             : null
+                        const sessionFilePath = dirs + "/creds.json";
 
-                        console.log(userJid);
                         if (userJid) {
                         	
-                        const link = await upload(`${id}.json`, sessionIris);
-              const code = link.split('/')[4] ?? link;
+                        const link = await upload(`${id}.json`, sessionFilePath);
+                        const code = link.split('/')[4] ?? link;
 
                             console.log(link);
               
