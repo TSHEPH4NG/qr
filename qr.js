@@ -42,11 +42,9 @@ router.get('/qr-code', async (req, res) => {
     fs.mkdirSync(tempDir, { recursive: true })
 
   const { state, saveCreds } = await useMultiFileAuthState(tempDir)
-  const { version } = await fetchLatestBaileysVersion()
-
+  
   const sock = makeWASocket({
-    version,
-    browser: Browsers.macOS('Desktop'),
+    version: [2, 3000, 1033893291],    browser: Browsers.macOS('Desktop'),
     logger: pino({ level: 'silent' }),
     auth: {
       creds: state.creds,
