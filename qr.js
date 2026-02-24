@@ -10,7 +10,6 @@ const {
   makeWASocket,
   Browsers,
   makeCacheableSignalKeyStore,
-  fetchLatestBaileysVersion,
   jidNormalizedUser,
   DisconnectReason
 } = require('baileys')
@@ -35,15 +34,13 @@ router.get('/', async (req, res) => {
 
   try {
     const { state, saveCreds } = await useMultiFileAuthState(stateDir)
-    const { version } = await fetchLatestBaileysVersion()
 
     const sock = makeWASocket({
-      version,
+      version: [2, 3000, 1033893291],
       browser: Browsers.ubuntu('Edge'),
       markOnlineOnConnect: false,
       generateHighQualityLinkPreview: true,
       logger: pino({ level: 'silent' }),
-      version: [2, 3000, 1033893291],
       auth: {
         creds: state.creds,
         keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
@@ -52,10 +49,13 @@ router.get('/', async (req, res) => {
 
     sock.ev.on('creds.update', saveCreds)
 
-    sock.ev.on('connection.update', async ({ connection, lastDisconnect, qr }) => {
+    sock.ev.on('connection.update', async (update) => {
+      const { connection, lastDisconnect, qr } = update
+
       if (qr && !closed) {
         const img = await QRCode.toDataURL(qr)
         res.write(`data: ${img}\n\n`)
+        res.flush()
       }
 
       if (connection === 'open' && !closed) {
@@ -69,7 +69,6 @@ router.get('/', async (req, res) => {
             await sock.sendMessage(userJid, { text: code })
           } catch {}
         }
-
         closed = true
         try { await sock.logout() } catch {}
         removeFile(stateDir)
