@@ -1,25 +1,27 @@
 {
-  "description": "qr",
-  "main": "./index.js",
+  "name": "Iris_md-bot",
+  "version": "1.0.0",
+  "description": "Scanner",
+  "main": "index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "echo 'No build step required'"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/TSH3PH4NG/joy.git"
-  },
+  "author": "Tshepang",
+  "license": "ISC",
   "dependencies": {
-    "baileys": "7.0.0-rc.9",
-    "sharp": "^0.33.5",
-    "qrcode": "^1.5.3",
-    "dotenv": "^16.3.1",
-    "awesome-phonenumber": "^2.64.0",
-    "pino": "^8.1.0",
-    "phone": "3.1.30",
-    "body-parser": "^1.20.1",
-    "express": "^4.18.1",
+    "@whiskeysockets/baileys": "^6.7.21",
+    "awesome-phonenumber": "7.2.0",
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
     "path": "^0.12.7",
-    "axios": "^1.7.7",
-    "fs": "0.0.1-security"
+    "phone": "3.1.55",
+    "pino": "9.5.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0"
   }
 }
