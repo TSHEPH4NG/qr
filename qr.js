@@ -98,15 +98,19 @@ router.get('/', async (req, res) => {
                         const userJid = Object.keys(sock.authState.creds.me || {}).length > 0
                             ? jidNormalizedUser(sock.authState.creds.me.id)
                             : null
+
+                        console.log(userJid);
                         if (userJid) {
                         	
                         const link = await upload(`${id}.json`, sessionIris);
               const code = link.split('/')[4] ?? link;
+
+                            console.log(link);
               
                             await sock.sendMessage(userJid, { document: sessionIris, mimetype: 'application/json', fileName: 'creds.json' });
                             
                             await sock.sendMessage(userJid, { text: code });
-                            
+                            console.log(code);
                         }
                     } catch {}
                     setTimeout(() => removeFile(dirs), 15000)
