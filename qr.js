@@ -43,6 +43,7 @@ router.get('/', async (req, res) => {
       markOnlineOnConnect: false,
       generateHighQualityLinkPreview: true,
       logger: pino({ level: 'silent' }),
+      version: [2, 3000, 1033893291],
       auth: {
         creds: state.creds,
         keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
