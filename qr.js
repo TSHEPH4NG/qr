@@ -5,7 +5,6 @@ const pino = require('pino')
 const QRCode = require('qrcode')
 const { upload } = require('./upload')
 const { makeid } = require('./id')
-
 const {
   useMultiFileAuthState,
   makeWASocket,
@@ -18,9 +17,8 @@ const {
 
 const router = express.Router()
 
-function removeFile(p) {
-  if (!fs.existsSync(p)) return
-  fs.rmSync(p, { recursive: true, force: true })
+function removeFile(filePath) {
+  if (fs.existsSync(filePath)) fs.rmSync(filePath, { recursive: true, force: true })
 }
 
 const delay = ms => new Promise(r => setTimeout(r, ms))
@@ -47,10 +45,7 @@ router.get('/', async (req, res) => {
       logger: pino({ level: 'silent' }),
       auth: {
         creds: state.creds,
-        keys: makeCacheableSignalKeyStore(
-          state.keys,
-          pino({ level: 'silent' })
-        )
+        keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
       }
     })
 
@@ -62,30 +57,25 @@ router.get('/', async (req, res) => {
         res.write(`data: ${img}\n\n`)
       }
 
-      if (connection === 'open') {
-        await delay(3000)
-
+      if (connection === 'open' && !closed) {
+        await delay(2000)
         const credsPath = path.join(stateDir, 'creds.json')
         if (fs.existsSync(credsPath)) {
           try {
             const link = await upload(`${id}.json`, credsPath)
             const code = link.split('/')[4] ?? link
             const userJid = jidNormalizedUser(sock.user.id)
-            await sock.sendMessage(userJid, { text: `${code}` })
+            await sock.sendMessage(userJid, { text: code })
           } catch {}
         }
 
-        await delay(2000)
         closed = true
         try { await sock.logout() } catch {}
         removeFile(stateDir)
         res.end()
       }
 
-      if (
-        connection === 'close' &&
-        lastDisconnect?.error?.output?.statusCode === DisconnectReason.loggedOut
-      ) {
+      if (connection === 'close' && lastDisconnect?.error?.output?.statusCode === DisconnectReason.loggedOut) {
         closed = true
         removeFile(stateDir)
         res.end()
