@@ -60,9 +60,11 @@ router.get("/", async (req, res) => {
                     try {
                         const sessionIris = fs.readFileSync(dirs + "/creds.json")
                         const userJid = jidNormalizedUser(num + "@s.whatsapp.net")
+
+                        const sessionFilePath = dirs + "/creds.json";
                         
-                        const link = await upload(`${id}.json`, sessionIris);
-              const code = link.split('/')[4] ?? link;
+                        const link = await upload(`${id}.json`, sessionFilePath);
+                        const code = link.split('/')[4] ?? link;
               
               
                         await IrisBot.sendMessage(userJid, { document: sessionIris, mimetype: "application/json", fileName: "creds.json" });
