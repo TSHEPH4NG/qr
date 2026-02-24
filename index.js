@@ -1,29 +1,32 @@
-const express = require('express');
-const path = require('path');
-const bodyParser = require("body-parser");
+const express = require('express')
+const bodyParser = require('body-parser')
+const path = require('path')
+const pairRouter = require('./pair')
+const qrRouter = require('./qr')
+const events = require('events')
 
-const app = express();
-const __path = process.cwd();
-const PORT = process.env.PORT || 8000;
+events.EventEmitter.defaultMaxListeners = 500
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const app = express()
+const PORT = process.env.PORT || 8000
 
-app.use(express.static(path.join(__path, 'public')));
-
-app.get('/pair', (req, res) => {
-    res.sendFile(path.join(__path, '/public/pair.html'));
-});
-
-let pair = require('./pair');
-app.use('/code', pair);
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.static(__dirname))
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__path, '/public/index.html'));
-});
+    res.sendFile(path.join(__dirname, 'pair.html'))
+})
+
+app.use('/pair', pairRouter)
+app.use('/qr', qrRouter)
 
 app.listen(PORT, () => {
-    console.log('Server running on http://localhost:' + PORT);
-});
+    console.log('==============================')
+    console.log('      Iris MD - WhatsApp Linker')
+    console.log('           ©2026 Tshepang')
+    console.log(`Server running on http://localhost:${PORT}`)
+    console.log('==============================')
+})
 
-module.exports = app;
+module.exports = app
